@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AWMC Codex 平台使用教程：订阅、API Key、Codex CLI、OpenCode 和 CC Switch 配置。">
+  <title>AWMC Codex 使用指南</title>
+  <style>
+    :root { color-scheme: light; --ink:#202a36; --muted:#5a6877; --line:#d8e0e7; --paper:#fff; --wash:#f3f6f8; --teal:#087f8c; --gold:#b66b13; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--wash); color:var(--ink); font:16px/1.72 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    header { background:#142b38; color:#fff; padding:36px max(24px,calc((100vw - 1100px)/2)); }
+    header p { margin:8px 0 0; max-width:720px; color:#c9d9e0; }
+    h1 { margin:0; font-size:30px; line-height:1.25; }
+    main { max-width:1100px; margin:28px auto 56px; padding:0 20px; display:grid; grid-template-columns:220px minmax(0,1fr); gap:32px; }
+    nav { align-self:start; position:sticky; top:20px; padding:16px; background:var(--paper); border:1px solid var(--line); border-radius:6px; }
+    nav strong { display:block; margin:0 0 8px; }
+    nav a { display:block; padding:4px 0; color:var(--muted); text-decoration:none; }
+    nav a:hover, a { color:var(--teal); }
+    article { min-width:0; padding:28px clamp(20px,4vw,48px); background:var(--paper); border:1px solid var(--line); border-radius:6px; }
+    h2 { margin:36px 0 10px; padding-top:8px; border-top:1px solid var(--line); font-size:23px; }
+    h3 { margin:24px 0 6px; font-size:18px; }
+    p { margin:8px 0 14px; }
+    ol,ul { padding-left:24px; }
+    li { margin:5px 0; }
+    code { padding:2px 5px; border-radius:3px; background:#edf2f5; font:0.92em ui-monospace,Consolas,monospace; overflow-wrap:anywhere; }
+    .note { margin:16px 0; padding:12px 16px; border-left:3px solid var(--teal); background:#edf7f7; }
+    .warn { border-left-color:var(--gold); background:#fff7eb; }
+    figure { margin:20px 0 28px; }
+    figure img { display:block; width:100%; height:auto; border:1px solid var(--line); border-radius:4px; }
+    figcaption { margin-top:6px; color:var(--muted); font-size:14px; }
+    .endpoint { display:inline-block; padding:8px 12px; background:#edf2f5; }
+    footer { max-width:1100px; margin:-30px auto 32px; padding:0 20px; color:var(--muted); font-size:14px; }
+    @media(max-width:760px) { header { padding:26px 20px; } h1 { font-size:25px; } main { display:block; margin-top:16px; padding:0 12px; } nav { position:static; margin-bottom:14px; columns:2; } nav strong { column-span:all; } article { padding:20px 16px; } h2 { font-size:21px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AWMC Codex 使用指南</h1>
+    <p>从开通订阅到在 Codex CLI、OpenCode 或 CC Switch 中使用本站 API。</p>
+  </header>
+  <main>
+    <nav aria-label="目录">
+      <strong>本页目录</strong>
+      <a href="#start">开始使用</a>
+      <a href="#subscription">开通订阅</a>
+      <a href="#key">创建 API Key</a>
+      <a href="#client">配置客户端</a>
+      <a href="#ccswitch">使用 CC Switch</a>
+      <a href="#usage">查看订阅和用量</a>
+      <a href="#trouble">常见问题</a>
+      <a href="#security">安全提示</a>
+    </nav>
+    <article>
+      <section id="start">
+        <h2>开始使用</h2>
+        <ol>
+          <li>打开 <a href="https://api.awmc-codex.cc/">AWMC Codex</a>，登录账号；没有账号时按页面提示注册。</li>
+          <li>在“订阅”页选择适合自己的套餐并完成支付，或在“兑换”页使用兑换码。</li>
+          <li>在“API 密钥”页创建密钥，选择服务分组。</li>
+          <li>把 API 地址、密钥和模型填入支持 OpenAI API 的客户端。</li>
+        </ol>
+        <div class="note">首次使用建议先创建一个 API Key，并用少量请求确认客户端配置正确。</div>
+      </section>
+
+      <section id="subscription">
+        <h2>开通或兑换订阅</h2>
+        <ol>
+          <li>从侧边栏打开“订阅”，比较套餐显示的有效期、额度和价格，再点“立即开通”。套餐内容和价格以页面实时显示为准。</li>
+          <li>如果已有同分组订阅，付款前会出现订阅发放方式选择窗口。选择“创建独立订阅”会新增一份独立额度和有效期；选择“延长有效期”会续期所选订阅并保留该订阅已用额度。</li>
+          <li>确认选择后再继续支付。支付成功后可在“我的订阅”查看权益。</li>
+          <li>兑换订阅时，在“兑换”页输入兑换码；如果该兑换码对应的分组已有订阅，同样先选择创建独立订阅或续期目标，再确认兑换。</li>
+        </ol>
+        <figure><img src="assets/subscription-shop.png" alt="订阅页显示可购买套餐"><figcaption>订阅页展示当前可购买的套餐；示例价格可能会变化。</figcaption></figure>
+        <figure><img src="assets/subscription-choice.png" alt="付款前选择创建独立订阅或续期"><figcaption>存在同分组订阅时，付款前选择如何发放新权益。</figcaption></figure>
+      </section>
+
+      <section id="key">
+        <h2>创建 API Key</h2>
+        <ol>
+          <li>打开侧边栏“API 密钥”，点击右上角“创建密钥”。</li>
+          <li>填写容易识别的名称，选择供应商 OpenAI，再选择分组。分组决定可用模型和计费倍率；倍率越高，通常每次请求消耗越多。</li>
+          <li>如需限制密钥有效期，可开启有效期设置；完成后点击“创建”。</li>
+          <li>创建成功后复制并妥善保存 API Key。不要将密钥发到群聊、截图或公开仓库。</li>
+        </ol>
+        <figure><img src="assets/api-keys-navigation.png" alt="API 密钥入口及密钥列表"><figcaption>从侧边栏进入“API 密钥”，可查看和管理已创建的密钥。</figcaption></figure>
+        <figure><img src="assets/create-api-key.png" alt="填写名称、供应商和分组创建密钥"><figcaption>创建时选择 OpenAI 供应商及需要使用的分组。</figcaption></figure>
+      </section>
+
+      <section id="client">
+        <h2>配置客户端</h2>
+        <p>本站提供 OpenAI 兼容 API。常用 API 地址如下：</p>
+        <p><code class="endpoint">https://api.awmc-codex.cc/v1</code></p>
+        <p>在客户端的供应商设置中填写：</p>
+        <ul>
+          <li>API Key：刚创建的密钥。</li>
+          <li>Base URL / API 地址：上面的地址。若客户端分别要求“官网链接”和“API 请求地址”，API 请求地址填写该地址。</li>
+          <li>模型：选择所选分组允许的模型。模型名称必须与分组和上游支持情况相符。</li>
+        </ul>
+        <p>也可以在“API 密钥”列表中使用“配置导入”，选择 Codex CLI、Codex CLI（WebSocket）或 OpenCode，再选择操作系统。页面会生成对应配置；复制后按弹窗中的文件路径保存，并把示例模型替换成你准备使用的模型。</p>
+        <figure><img src="assets/client-config-import.png" alt="选择客户端和系统生成配置"><figcaption>配置导入会根据客户端、认证模式和操作系统生成配置示例。</figcaption></figure>
+        <figure><img src="assets/client-config.png" alt="Codex CLI 配置示例"><figcaption>Codex CLI 示例包含服务商、API 地址和模型配置；请使用自己的密钥，不要照抄示例中的遮挡内容。</figcaption></figure>
+      </section>
+
+      <section id="ccswitch">
+        <h2>使用 CC Switch 导入</h2>
+        <ol>
+          <li>在“API 密钥”列表找到要使用的密钥。</li>
+          <li>如果已安装 CC Switch，点击该行“导入到 CCS”；如果使用其他客户端，点击“配置导入”。</li>
+          <li>在确认窗口核对供应商、API 地址和密钥所属账号，再点击导入。</li>
+          <li>回到 CC Switch，选择 AWMC Codex 供应商并启用对应路由，然后在目标客户端中选择模型。</li>
+        </ol>
+        <div class="note warn">配置导入会把 API Key 写入本机客户端配置。只在自己的可信设备上操作，并避免把含密钥的配置文件发给他人。</div>
+        <figure><img src="assets/cc-switch-supplier.png" alt="确认将 AWMC Codex 供应商配置导入 CC Switch"><figcaption>导入前检查供应商和 API 地址；密钥在页面中应保持遮挡。</figcaption></figure>
+      </section>
+
+      <section id="usage">
+        <h2>查看订阅和用量</h2>
+        <ul>
+          <li>“我的订阅”用于查看各份订阅的分组、剩余额度和到期时间。</li>
+          <li>“使用记录”用于检查请求、模型和额度消耗。</li>
+          <li>“API 密钥”用于管理密钥状态、分组和客户端配置导入。</li>
+          <li>购买订单可从“我的订单”查看；兑换码从“兑换”页使用。</li>
+        </ul>
+        <figure><img src="assets/api-keys-list.png" alt="API 密钥列表及客户端导入操作"><figcaption>密钥列表可查看分组和状态，并进入配置导入或 CC Switch 导入。</figcaption></figure>
+      </section>
+
+      <section id="trouble">
+        <h2>常见问题</h2>
+        <h3>401 / Unauthorized</h3>
+        <p>检查 API Key 是否复制完整、是否被禁用，以及客户端是否将它放在 API Key/Authorization 字段中。</p>
+        <h3>404 / 模型不可用</h3>
+        <p>检查模型名称拼写，并确认所选分组包含该模型。本站会根据上游账号的实际状态路由请求；某个上游暂不可用时，稍后重试或选择其他可用模型。</p>
+        <h3>429 / 额度或请求频率限制</h3>
+        <p>在“我的订阅”和“使用记录”查看剩余额度与消耗。若额度已用完，请按站内提供的方式购买或兑换订阅。</p>
+        <h3>客户端无法连接</h3>
+        <p>确认 Base URL 为 <code>https://api.awmc-codex.cc/v1</code>，网络可以访问本站，并且客户端选择了与配置匹配的 OpenAI/Responses 协议。</p>
+      </section>
+
+      <section id="security">
+        <h2>安全提示</h2>
+        <ul>
+          <li>API Key 等同账号凭证。不要公开分享；怀疑泄露时，立即在“API 密钥”页禁用或删除并创建新密钥。</li>
+          <li>不要在公开仓库提交包含真实密钥的配置文件。截图前遮挡密钥、邮箱、订单号和个人资料。</li>
+          <li>只通过本站官方页面和可信客户端配置密钥。</li>
+        </ul>
+      </section>
+    </article>
+  </main>
+  <footer>AWMC Codex 使用指南 · 套餐、模型和界面可能更新，请以本站实时页面为准。</footer>
+</body>
+</html>
